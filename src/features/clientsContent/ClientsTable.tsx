@@ -17,6 +17,8 @@ import {
 } from '@elastic/eui';
 import { ClientInputModal } from './ClientInputModal';
 import { stringify } from 'querystring';
+import { EuiTableSortingType } from '@elastic/eui/src/components/basic_table';
+import { Client } from '../interfaces/Client';
 
 
 export const ClientsTable = () => {
@@ -25,8 +27,8 @@ export const ClientsTable = () => {
 
     const [enableAll, setEnableAll] = useState(false);
     const [readonly, setReadonly] = useState(false)
-    const [sortField, setSortField] = useState('firstName');
-    const [sortDirection, setSortDirection] = useState('asc');
+    const [sortField, setSortField] = useState<keyof Client>("firstName");
+    const [sortDirection, setSortDirection] = useState<"asc" | "desc">('asc');
 
     const [firstNameSearchValue, setFirstNameSearchValue] = useState('');
 
@@ -62,7 +64,7 @@ export const ClientsTable = () => {
             address: "JakasUlica 3/21",
         },
     ]
-    const [temporaryUsers, setTemporaryUsers] = useState(allTemporaryUsers);
+    const [temporaryUsers, setTemporaryUsers] = useState<any>(allTemporaryUsers);
 
 
     const onTableChange = ({ page = {} as any, sort = {} as any }) => {
@@ -167,7 +169,7 @@ export const ClientsTable = () => {
         showPerPageOptions: true,
     };
 
-    const sorting = {
+    const sorting:EuiTableSortingType<Client> = {
         sort: {
             field: sortField,
             direction: sortDirection,
