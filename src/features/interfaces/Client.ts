@@ -7,5 +7,4 @@ export interface Client{
     city: string
     roadName: string
     roadNumber: string
-    localNumber: string
 }

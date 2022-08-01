@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     formatDate,
     EuiBasicTable,
@@ -37,35 +37,59 @@ export const ClientsTable = () => {
             id: '1',
             firstName: 'john',
             lastName: 'doe',
-            address: "JakasUlica 3/21",
+            country: "string",
+            city: "string",
+            roadName: "string",
+            roadNumber: "string",
+
         },
         {
             id: '2',
             firstName: 'Mariusz',
             lastName: 'Pudzianowski',
-            address: "JakasUlica 3/21",
+            country: "string",
+            city: "string",
+            roadName: "string",
+            roadNumber: "string",
+
         },
         {
             id: '3',
             firstName: 'Adam',
             lastName: 'Małysz',
-            address: "JakasUlica 3/21",
+            country: "string",
+            city: "string",
+            roadName: "string",
+            roadNumber: "string",
+
         },
         {
             id: '4',
             firstName: 'Huan',
             lastName: 'Pablo',
-            address: "JakasUlica 3/21",
+            country: "string",
+            city: "string",
+            roadName: "string",
+            roadNumber: "string",
+
         },
         {
             id: '5',
             firstName: 'Cristopher',
             lastName: 'Kononowitch',
-            address: "JakasUlica 3/21",
+            country: "string",
+            city: "string",
+            roadName: "string",
+            roadNumber: "string",
+
         },
     ]
+
     const [temporaryUsers, setTemporaryUsers] = useState<any>(allTemporaryUsers);
 
+    useEffect(() => {
+        onTableChange({page: {index: pageIndex, size: pageSize}, sort:{field: sortField, direction: sortDirection}})
+    }, [firstNameSearchValue])
 
     const onTableChange = ({ page = {} as any, sort = {} as any }) => {
         const { index: pageIndex, size: pageSize } = page;
@@ -75,26 +99,25 @@ export const ClientsTable = () => {
         setPageSize(pageSize);
         setSortField(sortField);
         setSortDirection(sortDirection);
-
-
-
+        
+        let lista:Client[] = JSON.parse(JSON.stringify(allTemporaryUsers))
 
         //sorting
         if (sortDirection === "asc") {
-            setTemporaryUsers(allTemporaryUsers.sort((a, b) => (a.firstName > b.firstName) ? 1 : ((b.firstName > a.firstName) ? -1 : 0)))
+            lista = (lista.sort((a, b) => (a.firstName > b.firstName) ? 1 : ((b.firstName > a.firstName) ? -1 : 0)))
         }
         if (sortDirection === "desc") {
-            setTemporaryUsers(allTemporaryUsers.sort((a, b) => (a.firstName < b.firstName) ? 1 : ((b.firstName < a.firstName) ? -1 : 0)))
+            lista = (lista.sort((a, b) => (a.firstName < b.firstName) ? 1 : ((b.firstName < a.firstName) ? -1 : 0)))
         }
 
         //searching - setState jest ignorowane
-        if (firstNameSearchValue === "") {
+        // if (firstNameSearchValue === "") {
+        //     console.log("puste")
+        //     lista = (allTemporaryUsers)
+        // }
+        if(firstNameSearchValue !== "") {
             console.log("siema")
-            setTemporaryUsers(allTemporaryUsers)
-        }
-        else {
-            console.log("essa")
-            setTemporaryUsers(allTemporaryUsers.filter(obj => {
+            lista = (lista.filter(obj => {
                 return obj.firstName.includes(firstNameSearchValue)
             }))
         }
@@ -102,15 +125,15 @@ export const ClientsTable = () => {
         //pagination
         if (pageSize !== 0) {
             if (pageIndex === 0) {
-                setTemporaryUsers(allTemporaryUsers.slice(pageIndex, pageSize + pageIndex))
+                lista = (lista.slice(pageIndex, pageSize + pageIndex))
             }
             else {
-                setTemporaryUsers(allTemporaryUsers.slice(pageIndex + 1, pageSize + pageIndex + 1))
+                lista = (lista.slice(pageIndex + 1, pageSize + pageIndex + 1))
             }
         }
-        else setTemporaryUsers(allTemporaryUsers)
+     
 
-
+        setTemporaryUsers(lista);
 
     };
 
@@ -134,8 +157,33 @@ export const ClientsTable = () => {
         },
 
         {
-            field: 'address',
-            name: 'Adres',
+            field: 'country',
+            name: 'Kraj',
+            truncateText: true,
+            mobileOptions: {
+                show: true,
+            },
+        },
+
+        {
+            field: 'city',
+            name: 'Miasto',
+            truncateText: true,
+            mobileOptions: {
+                show: true,
+            },
+        },
+        {
+            field: 'roadName',
+            name: 'Ulica',
+            truncateText: true,
+            mobileOptions: {
+                show: true,
+            },
+        },
+        {
+            field: 'roadNumber',
+            name: 'Numer budynku',
             truncateText: true,
             mobileOptions: {
                 show: true,
@@ -144,9 +192,10 @@ export const ClientsTable = () => {
 
         {
             field: 'editDelete',
-
+            name: "Edycja / Usuwanie",
+            width: "25%",
             render: () => (
-                <span>
+                <div>
                     <EuiFlexGroup>
                         <EuiFlexItem>
                         <ClientInputModal mode ="edit"></ClientInputModal>
@@ -155,7 +204,7 @@ export const ClientsTable = () => {
                             <EuiButton fill size="s" color='danger' >Usuń</EuiButton>
                         </EuiFlexItem>
                     </EuiFlexGroup>
-                </span>
+                </div>
             )
         },
 
