@@ -8,3 +8,13 @@ export interface Client{
     roadName: string
     roadNumber: string
 }
+//obiekt inicjalizacyjny
+export const InitialClient:Client ={
+    id: "",
+    firstName: "",
+    lastName: "",
+    country: "",
+    city: "",
+    roadName: "",
+    roadNumber: ""
+}

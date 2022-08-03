@@ -32,6 +32,18 @@ export const ClientsTable = () => {
 
     const [firstNameSearchValue, setFirstNameSearchValue] = useState('');
 
+    const [clientToEdit, setClientToEdit] = useState<Client | null>(null);
+
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [modalMode, setModalMode] = useState<"add" | "edit">("add");
+    const handleClose:() => void = () =>{setIsModalOpen(false)}
+    
+    const handleEditButton = (client:Client, mode:"add" | "edit") => {
+        setClientToEdit(client);
+        setModalMode(mode)
+        setIsModalOpen(true);
+    }
+
     const allTemporaryUsers = [
         {
             id: '1',
@@ -110,11 +122,7 @@ export const ClientsTable = () => {
             lista = (lista.sort((a, b) => (a.firstName < b.firstName) ? 1 : ((b.firstName < a.firstName) ? -1 : 0)))
         }
 
-        //searching - setState jest ignorowane
-        // if (firstNameSearchValue === "") {
-        //     console.log("puste")
-        //     lista = (allTemporaryUsers)
-        // }
+        //searching 
         if(firstNameSearchValue !== "") {
             console.log("siema")
             lista = (lista.filter(obj => {
@@ -136,7 +144,7 @@ export const ClientsTable = () => {
         setTemporaryUsers(lista);
 
     };
-
+    // console.log( <ClientInputModal mode ="edit" client = {client} ></ClientInputModal>)
     const columns = [
         {
             field: 'firstName',
@@ -194,11 +202,11 @@ export const ClientsTable = () => {
             field: 'editDelete',
             name: "Edycja / Usuwanie",
             width: "25%",
-            render: () => (
+            render: (client:Client) => (
                 <div>
                     <EuiFlexGroup>
                         <EuiFlexItem>
-                        <ClientInputModal mode ="edit"></ClientInputModal>
+                            <EuiButton size="s" onClick={() =>{handleEditButton(client,"edit")}}>Edytuj</EuiButton>
                         </EuiFlexItem>
                         <EuiFlexItem>
                             <EuiButton fill size="s" color='danger' >Usuń</EuiButton>
@@ -254,7 +262,8 @@ export const ClientsTable = () => {
                 sorting={sorting}
                 onChange={onTableChange}
             />
-            
+            <ClientInputModal mode ={modalMode} client = {clientToEdit} open={isModalOpen} handleClose={handleClose}></ClientInputModal>
+
         </div>
     );
 };

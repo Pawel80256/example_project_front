@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, Fragment, useEffect } from 'react';
 import {
   EuiButton,
   EuiButtonEmpty,
@@ -16,37 +16,42 @@ import {
   EuiText,
   useGeneratedHtmlId,
 } from '@elastic/eui';
+import { Client } from '../interfaces/Client';
 
-export const ClientInputModal: React.FC<{mode:string}> = (props) => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
+export const ClientInputModal: React.FC<{ mode: "add" | "edit"; client: Client | null; open: boolean; handleClose:()=>void }> = (props) => {
+  // const [open, setOpen] = useState<boolean>(false);
   const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });
-  const closeModal = () => setIsModalVisible(false);
-  const showModal = () => setIsModalVisible(true);
+  const closeModal = () => (props.open = false);
 
-  
-  const addFormSample = (
+  const [currentClient, setCurrentClient] = useState<Client | null>(null);
+
+  // useffect na open ustawia clienta 
+  // useEffect(() => {
+  //   setCurrentClient(props.client);
+  //   // setOpen(props.open)
+  //   console.log(props.client)
+  // }, [open])
+
+  const form = (
     <EuiForm id={modalFormId} component="form">
 
       <EuiFormRow label="Imię">
-        <EuiFieldText name="popfirst" />
+        <EuiFieldText name="firstName" value={currentClient?.firstName}/>
       </EuiFormRow>
       <EuiFormRow label="Nazwisko">
-        <EuiFieldText name="popfirst" />
+        <EuiFieldText name="lastName" value={currentClient?.lastName}/>
       </EuiFormRow>
       <EuiFormRow label="Kraj">
-        <EuiFieldText name="popfirst" />
+        <EuiFieldText name="country" value={currentClient?.country}/>
       </EuiFormRow>
       <EuiFormRow label="Miasto">
-        <EuiFieldText name="popfirst" />
+        <EuiFieldText name="city" value={currentClient?.city}/>
       </EuiFormRow>
       <EuiFormRow label="Ulica">
-        <EuiFieldText name="popfirst" />
+        <EuiFieldText name="roadName" value={currentClient?.roadName}/>
       </EuiFormRow>
       <EuiFormRow label="Nr domu">
-        <EuiFieldText name="popfirst" />
-      </EuiFormRow>
-      <EuiFormRow label="Nr lokalu">
-        <EuiFieldText name="popfirst" />
+        <EuiFieldText name="roadNumber" value={currentClient?.roadNumber}/>
       </EuiFormRow>
     </EuiForm>
   );
@@ -54,7 +59,7 @@ export const ClientInputModal: React.FC<{mode:string}> = (props) => {
 
   let modal;
 
-  if (isModalVisible) {
+  if (props.open) {
     modal = (
       <EuiModal onClose={closeModal} initialFocus="[name=popswitch]">
         <EuiModalHeader>
@@ -63,13 +68,12 @@ export const ClientInputModal: React.FC<{mode:string}> = (props) => {
             {props.mode === "edit" && <h1>Edycja danych pacjenta</h1>}
           </EuiModalHeaderTitle>
         </EuiModalHeader>
-
-        <EuiModalBody>{addFormSample}</EuiModalBody>
+        <EuiModalBody>{form}</EuiModalBody>
 
         <EuiModalFooter>
-          <EuiButtonEmpty onClick={closeModal}>Anuluj</EuiButtonEmpty>
+          <EuiButtonEmpty onClick={props.handleClose}>Anuluj</EuiButtonEmpty>
 
-          <EuiButton type="submit" form={modalFormId} onClick={closeModal} fill>
+          <EuiButton type="submit" form={modalFormId} onClick={props.handleClose} fill>
             Dodaj
           </EuiButton>
         </EuiModalFooter>
@@ -78,10 +82,10 @@ export const ClientInputModal: React.FC<{mode:string}> = (props) => {
   }
   return (
     <div>
-      <EuiButton size="s" onClick={showModal}>
+      {/* <EuiButton size="s" onClick={()=>setOpen(true)}>
         {props.mode === "add" && "Dodaj pacjenta"}
         {props.mode === "edit" && "Edytuj "}
-        </EuiButton>
+      </EuiButton> */}
       {modal}
     </div>
   );
