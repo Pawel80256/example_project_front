@@ -36,22 +36,22 @@ export const ClientInputModal: React.FC<{ mode: "add" | "edit"; client: Client |
     <EuiForm id={modalFormId} component="form">
 
       <EuiFormRow label="Imię">
-        <EuiFieldText name="firstName" value={currentClient?.firstName}/>
+        <EuiFieldText name="firstName" value={props.client?.firstName}/>
       </EuiFormRow>
       <EuiFormRow label="Nazwisko">
-        <EuiFieldText name="lastName" value={currentClient?.lastName}/>
+        <EuiFieldText name="lastName" value={props.client?.lastName}/>
       </EuiFormRow>
       <EuiFormRow label="Kraj">
-        <EuiFieldText name="country" value={currentClient?.country}/>
+        <EuiFieldText name="country" value={props.client?.country}/>
       </EuiFormRow>
       <EuiFormRow label="Miasto">
-        <EuiFieldText name="city" value={currentClient?.city}/>
+        <EuiFieldText name="city" value={props.client?.city}/>
       </EuiFormRow>
       <EuiFormRow label="Ulica">
-        <EuiFieldText name="roadName" value={currentClient?.roadName}/>
+        <EuiFieldText name="roadName" value={props.client?.roadName}/>
       </EuiFormRow>
       <EuiFormRow label="Nr domu">
-        <EuiFieldText name="roadNumber" value={currentClient?.roadNumber}/>
+        <EuiFieldText name="roadNumber" value={props.client?.roadNumber}/>
       </EuiFormRow>
     </EuiForm>
   );

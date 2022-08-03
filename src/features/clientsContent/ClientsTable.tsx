@@ -39,6 +39,7 @@ export const ClientsTable = () => {
     const handleClose:() => void = () =>{setIsModalOpen(false)}
     
     const handleEditButton = (client:Client, mode:"add" | "edit") => {
+        console.log(client)
         setClientToEdit(client);
         setModalMode(mode)
         setIsModalOpen(true);
@@ -202,7 +203,7 @@ export const ClientsTable = () => {
             field: 'editDelete',
             name: "Edycja / Usuwanie",
             width: "25%",
-            render: (client:Client) => (
+            render: (el:any, client:Client) => (
                 <div>
                     <EuiFlexGroup>
                         <EuiFlexItem>
