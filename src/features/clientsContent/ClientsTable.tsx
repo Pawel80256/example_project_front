@@ -19,6 +19,7 @@ import { ClientInputModal } from './ClientInputModal';
 import { stringify } from 'querystring';
 import { EuiTableSortingType } from '@elastic/eui/src/components/basic_table';
 import { Client } from '../interfaces/Client';
+import axios from "axios";
 
 
 export const ClientsTable = () => {
@@ -30,14 +31,15 @@ export const ClientsTable = () => {
     const [sortField, setSortField] = useState<keyof Client>("firstName");
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">('asc');
 
+    const [allClients, setAllClients] = useState<Client[]>([]);
+    const [currentClients, setCurrentClients] = useState<Client[]>([]);
     const [firstNameSearchValue, setFirstNameSearchValue] = useState('');
-
     const [clientToEdit, setClientToEdit] = useState<Client | null>(null);
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [modalMode, setModalMode] = useState<"add" | "edit">("add");
     const handleClose:() => void = () =>{setIsModalOpen(false)}
-    
+
     const handleEditButton = (client:Client, mode:"add" | "edit") => {
         console.log(client)
         setClientToEdit(client);
@@ -45,60 +47,15 @@ export const ClientsTable = () => {
         setIsModalOpen(true);
     }
 
-    const allTemporaryUsers = [
-        {
-            id: '1',
-            firstName: 'john',
-            lastName: 'doe',
-            country: "string",
-            city: "string",
-            roadName: "string",
-            roadNumber: "string",
-
-        },
-        {
-            id: '2',
-            firstName: 'Mariusz',
-            lastName: 'Pudzianowski',
-            country: "string",
-            city: "string",
-            roadName: "string",
-            roadNumber: "string",
-
-        },
-        {
-            id: '3',
-            firstName: 'Adam',
-            lastName: 'Małysz',
-            country: "string",
-            city: "string",
-            roadName: "string",
-            roadNumber: "string",
-
-        },
-        {
-            id: '4',
-            firstName: 'Huan',
-            lastName: 'Pablo',
-            country: "string",
-            city: "string",
-            roadName: "string",
-            roadNumber: "string",
-
-        },
-        {
-            id: '5',
-            firstName: 'Cristopher',
-            lastName: 'Kononowitch',
-            country: "string",
-            city: "string",
-            roadName: "string",
-            roadNumber: "string",
-
-        },
-    ]
-
-    const [temporaryUsers, setTemporaryUsers] = useState<any>(allTemporaryUsers);
+    const getClients = () =>{
+        axios.get('http://localhost:8080/api/clients')
+            .then((response) => {
+                const clients = response.data;
+                setAllClients(clients)
+                setCurrentClients(clients)
+            })
+    }
+    useEffect(getClients,[]);
 
     useEffect(() => {
         onTableChange({page: {index: pageIndex, size: pageSize}, sort:{field: sortField, direction: sortDirection}})
@@ -112,8 +69,8 @@ export const ClientsTable = () => {
         setPageSize(pageSize);
         setSortField(sortField);
         setSortDirection(sortDirection);
-        
-        let lista:Client[] = JSON.parse(JSON.stringify(allTemporaryUsers))
+
+        let lista:Client[] = JSON.parse(JSON.stringify(allClients))
 
         //sorting
         if (sortDirection === "asc") {
@@ -140,9 +97,9 @@ export const ClientsTable = () => {
                 lista = (lista.slice(pageIndex + 1, pageSize + pageIndex + 1))
             }
         }
-     
 
-        setTemporaryUsers(lista);
+
+        setCurrentClients(lista);
 
     };
     // console.log( <ClientInputModal mode ="edit" client = {client} ></ClientInputModal>)
@@ -166,7 +123,7 @@ export const ClientsTable = () => {
         },
 
         {
-            field: 'country',
+            field: 'address.country',
             name: 'Kraj',
             truncateText: true,
             mobileOptions: {
@@ -175,7 +132,7 @@ export const ClientsTable = () => {
         },
 
         {
-            field: 'city',
+            field: 'address.city',
             name: 'Miasto',
             truncateText: true,
             mobileOptions: {
@@ -183,7 +140,7 @@ export const ClientsTable = () => {
             },
         },
         {
-            field: 'roadName',
+            field: 'address.roadName',
             name: 'Ulica',
             truncateText: true,
             mobileOptions: {
@@ -191,7 +148,7 @@ export const ClientsTable = () => {
             },
         },
         {
-            field: 'roadNumber',
+            field: 'address.roadNumber',
             name: 'Numer budynku',
             truncateText: true,
             mobileOptions: {
@@ -222,7 +179,7 @@ export const ClientsTable = () => {
     const pagination = {
         pageIndex,
         pageSize,
-        totalItemCount: allTemporaryUsers.length,
+        totalItemCount: allClients.length,
         pageSizeOptions: [2, 0],
         showPerPageOptions: true,
     };
@@ -257,7 +214,7 @@ export const ClientsTable = () => {
 
             <EuiBasicTable
                 tableCaption="Demo for EuiBasicTable with pagination"
-                items={temporaryUsers}
+                items={currentClients}
                 columns={columns}
                 pagination={pagination}
                 sorting={sorting}
