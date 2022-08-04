@@ -1,4 +1,4 @@
-import React, { useState, Fragment, useEffect } from 'react';
+import React, {useState, Fragment, useEffect, useRef} from 'react';
 import {
   EuiButton,
   EuiButtonEmpty,
@@ -16,42 +16,73 @@ import {
   EuiText,
   useGeneratedHtmlId,
 } from '@elastic/eui';
-import { Client } from '../interfaces/Client';
+import {Client, InitialClient} from '../interfaces/Client';
+import axios from "axios";
 
-export const ClientInputModal: React.FC<{ mode: "add" | "edit"; client: Client | null; open: boolean; handleClose:()=>void }> = (props) => {
+export const ClientInputModal: React.FC<{ mode: "add" | "edit"; client: Client; open: boolean; handleClose:()=>void }> = (props) => {
   // const [open, setOpen] = useState<boolean>(false);
   const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });
   const closeModal = () => (props.open = false);
 
-  const [currentClient, setCurrentClient] = useState<Client | null>(null);
+  const [currentClient, setCurrentClient] = useState<Client>(InitialClient);
 
+  const firstNameRef = useRef<HTMLInputElement>(null)
+  const lastNameRef = useRef<HTMLInputElement>(null)
+  const countryRef = useRef<HTMLInputElement>(null)
+  const cityRef = useRef<HTMLInputElement>(null)
+  const roadNameRef = useRef<HTMLInputElement>(null)
+  const roadNumberRef = useRef<HTMLInputElement>(null)
+
+    const addClient = () => {
+        const tempClient:Client = {
+            id : currentClient.id,
+            firstName : firstNameRef.current!.value,
+            lastName : lastNameRef.current!.value,
+            address :{
+                country : countryRef.current!.value,
+                city : cityRef.current!.value,
+                roadName : roadNameRef.current!.value,
+                roadNumber : roadNumberRef.current!.value
+            }
+        }
+        axios.post('http://localhost:8080/api/client',tempClient)
+            .then(function (response) {
+            console.log(response);
+        })
+            .catch(function (error) {
+                console.log(error);
+            });
+    };
+
+
+  // const [currentClient, setCurrentClient] = useState<Client | null>(null);
   // useffect na open ustawia clienta 
   // useEffect(() => {
   //   setCurrentClient(props.client);
   //   // setOpen(props.open)
   //   console.log(props.client)
   // }, [open])
-
+    useEffect(()=>{setCurrentClient(props.client)},[props.open])
   const form = (
     <EuiForm id={modalFormId} component="form">
 
       <EuiFormRow label="Imię">
-        <EuiFieldText name="firstName" defaultValue={props.client?.firstName}/>
+        <EuiFieldText name="firstName"  defaultValue={currentClient.firstName}  inputRef={firstNameRef} />
       </EuiFormRow>
       <EuiFormRow label="Nazwisko">
-        <EuiFieldText name="lastName" defaultValue={props.client?.lastName}/>
+        <EuiFieldText name="lastName" defaultValue={currentClient.lastName} inputRef={lastNameRef}/>
       </EuiFormRow>
       <EuiFormRow label="Kraj">
-        <EuiFieldText name="country" defaultValue={props.client?.address.country}/>
+        <EuiFieldText name="country" defaultValue={currentClient.address.country} inputRef={countryRef}/>
       </EuiFormRow>
       <EuiFormRow label="Miasto">
-        <EuiFieldText name="city" defaultValue={props.client?.address.city}/>
+        <EuiFieldText name="city" defaultValue={currentClient.address.city} inputRef={cityRef}/>
       </EuiFormRow>
       <EuiFormRow label="Ulica">
-        <EuiFieldText name="roadName" defaultValue={props.client?.address.roadName}/>
+        <EuiFieldText name="roadName" defaultValue={currentClient.address.roadName} inputRef={roadNameRef}/>
       </EuiFormRow>
       <EuiFormRow label="Nr domu">
-        <EuiFieldText name="roadNumber" defaultValue={props.client?.address.roadNumber}/>
+        <EuiFieldText name="roadNumber" defaultValue={currentClient.address.roadNumber} inputRef={roadNumberRef}/>
       </EuiFormRow>
     </EuiForm>
   );
@@ -73,7 +104,7 @@ export const ClientInputModal: React.FC<{ mode: "add" | "edit"; client: Client |
         <EuiModalFooter>
           <EuiButtonEmpty onClick={props.handleClose}>Anuluj</EuiButtonEmpty>
 
-          <EuiButton type="submit" form={modalFormId} onClick={props.handleClose} fill>
+          <EuiButton /*type="submit"*/ form={modalFormId} onClick={addClient} fill>
             Dodaj
           </EuiButton>
         </EuiModalFooter>
@@ -82,10 +113,6 @@ export const ClientInputModal: React.FC<{ mode: "add" | "edit"; client: Client |
   }
   return (
     <div>
-      {/* <EuiButton size="s" onClick={()=>setOpen(true)}>
-        {props.mode === "add" && "Dodaj pacjenta"}
-        {props.mode === "edit" && "Edytuj "}
-      </EuiButton> */}
       {modal}
     </div>
   );

@@ -18,7 +18,7 @@ import {
 import { ClientInputModal } from './ClientInputModal';
 import { stringify } from 'querystring';
 import { EuiTableSortingType } from '@elastic/eui/src/components/basic_table';
-import { Client } from '../interfaces/Client';
+import {Client, InitialClient} from '../interfaces/Client';
 import axios from "axios";
 
 
@@ -34,7 +34,7 @@ export const ClientsTable = () => {
     const [allClients, setAllClients] = useState<Client[]>([]);
     const [currentClients, setCurrentClients] = useState<Client[]>([]);
     const [firstNameSearchValue, setFirstNameSearchValue] = useState('');
-    const [clientToEdit, setClientToEdit] = useState<Client | null>(null);
+    const [clientToEdit, setClientToEdit] = useState<Client>(InitialClient);
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [modalMode, setModalMode] = useState<"add" | "edit">("add");
@@ -54,6 +54,7 @@ export const ClientsTable = () => {
                 setAllClients(clients)
                 setCurrentClients(clients)
             })
+
     }
     useEffect(getClients,[]);
 
