@@ -26,8 +26,7 @@ export const ClientsTable = () => {
     const [pageIndex, setPageIndex] = useState(0);
     const [pageSize, setPageSize] = useState(0);
 
-    const [enableAll, setEnableAll] = useState(false);
-    const [readonly, setReadonly] = useState(false)
+
     const [sortField, setSortField] = useState<keyof Client>("firstName");
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">('asc');
 
@@ -83,7 +82,6 @@ export const ClientsTable = () => {
 
         //searching 
         if(firstNameSearchValue !== "") {
-            console.log("siema")
             lista = (lista.filter(obj => {
                 return obj.firstName.includes(firstNameSearchValue)
             }))
@@ -91,12 +89,9 @@ export const ClientsTable = () => {
 
         //pagination
         if (pageSize !== 0) {
-            if (pageIndex === 0) {
-                lista = (lista.slice(pageIndex, pageSize + pageIndex))
-            }
-            else {
-                lista = (lista.slice(pageIndex + 1, pageSize + pageIndex + 1))
-            }
+
+                lista = (lista.slice(pageIndex*2, pageSize+(pageIndex*2)))
+
         }
 
 
@@ -190,8 +185,7 @@ export const ClientsTable = () => {
             field: sortField,
             direction: sortDirection,
         },
-        enableAllColumns: enableAll,
-        readOnly: readonly,
+
     };
 
 
