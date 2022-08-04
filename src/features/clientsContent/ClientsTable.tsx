@@ -26,7 +26,6 @@ export const ClientsTable = () => {
     const [pageIndex, setPageIndex] = useState(0);
     const [pageSize, setPageSize] = useState(0);
 
-
     const [sortField, setSortField] = useState<keyof Client>("firstName");
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">('asc');
 
@@ -44,6 +43,16 @@ export const ClientsTable = () => {
         setClientToEdit(client);
         setModalMode(mode)
         setIsModalOpen(true);
+    }
+
+    const handleDelete = (clientId:string) =>{
+        axios.delete('http://localhost:8080/api/client/'.concat(clientId))
+            .then(function (response) {
+            console.log(response);
+        })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
 
     const getClients = () =>{
@@ -89,16 +98,12 @@ export const ClientsTable = () => {
 
         //pagination
         if (pageSize !== 0) {
-
                 lista = (lista.slice(pageIndex*2, pageSize+(pageIndex*2)))
-
         }
 
-
         setCurrentClients(lista);
-
     };
-    // console.log( <ClientInputModal mode ="edit" client = {client} ></ClientInputModal>)
+
     const columns = [
         {
             field: 'firstName',
@@ -163,7 +168,7 @@ export const ClientsTable = () => {
                             <EuiButton size="s" onClick={() =>{handleEditButton(client,"edit")}}>Edytuj</EuiButton>
                         </EuiFlexItem>
                         <EuiFlexItem>
-                            <EuiButton fill size="s" color='danger' >Usuń</EuiButton>
+                            <EuiButton fill size="s" color='danger' onClick={()=>handleDelete(client.id)} >Usuń</EuiButton>
                         </EuiFlexItem>
                     </EuiFlexGroup>
                 </div>

@@ -104,7 +104,7 @@ export const ClientInputModal: React.FC<{ mode: "add" | "edit"; client: Client; 
         <EuiModalFooter>
           <EuiButtonEmpty onClick={props.handleClose}>Anuluj</EuiButtonEmpty>
 
-          <EuiButton /*type="submit"*/ form={modalFormId} onClick={addClient} fill>
+          <EuiButton type="submit" form={modalFormId} onClick={addClient} fill>
             Dodaj
           </EuiButton>
         </EuiModalFooter>
