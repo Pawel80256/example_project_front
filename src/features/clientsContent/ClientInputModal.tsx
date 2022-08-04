@@ -33,7 +33,7 @@ export const ClientInputModal: React.FC<{ mode: "add" | "edit"; client: Client; 
   const roadNameRef = useRef<HTMLInputElement>(null)
   const roadNumberRef = useRef<HTMLInputElement>(null)
 
-    const addClient = () => {
+    const handleSubmit = () => {
         const tempClient:Client = {
             id : currentClient.id,
             firstName : firstNameRef.current!.value,
@@ -45,24 +45,31 @@ export const ClientInputModal: React.FC<{ mode: "add" | "edit"; client: Client; 
                 roadNumber : roadNumberRef.current!.value
             }
         }
-        axios.post('http://localhost:8080/api/client',tempClient)
-            .then(function (response) {
-            console.log(response);
-        })
-            .catch(function (error) {
-                console.log(error);
-            });
+        if(props.mode === "add"){
+            axios.post('http://localhost:8080/api/client',tempClient)
+                .then(function (response) {
+                    console.log(response);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+
+        if(props.mode === "edit"){
+            axios.put('http://localhost:8080/api/client',tempClient)
+                .then(function (response) {
+                    console.log(response);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+
     };
 
 
-  // const [currentClient, setCurrentClient] = useState<Client | null>(null);
-  // useffect na open ustawia clienta 
-  // useEffect(() => {
-  //   setCurrentClient(props.client);
-  //   // setOpen(props.open)
-  //   console.log(props.client)
-  // }, [open])
     useEffect(()=>{setCurrentClient(props.client)},[props.open])
+
   const form = (
     <EuiForm id={modalFormId} component="form">
 
@@ -104,7 +111,7 @@ export const ClientInputModal: React.FC<{ mode: "add" | "edit"; client: Client; 
         <EuiModalFooter>
           <EuiButtonEmpty onClick={props.handleClose}>Anuluj</EuiButtonEmpty>
 
-          <EuiButton type="submit" form={modalFormId} onClick={addClient} fill>
+          <EuiButton type="submit" form={modalFormId} onClick={handleSubmit} fill>
             Dodaj
           </EuiButton>
         </EuiModalFooter>

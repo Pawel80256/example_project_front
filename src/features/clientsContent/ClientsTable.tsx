@@ -55,6 +55,7 @@ export const ClientsTable = () => {
             });
     }
 
+
     const getClients = () =>{
         axios.get('http://localhost:8080/api/clients')
             .then((response) => {
@@ -62,7 +63,6 @@ export const ClientsTable = () => {
                 setAllClients(clients)
                 setCurrentClients(clients)
             })
-
     }
     useEffect(getClients,[]);
 
