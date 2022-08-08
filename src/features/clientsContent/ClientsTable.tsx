@@ -20,6 +20,8 @@ import { stringify } from 'querystring';
 import { EuiTableSortingType } from '@elastic/eui/src/components/basic_table';
 import {Client, InitialClient} from '../interfaces/Client';
 import axios from "axios";
+import {useDispatch} from "react-redux";
+import {fetchClients} from "./ClientsSlice";
 
 
 export const ClientsTable = () => {
@@ -28,6 +30,8 @@ export const ClientsTable = () => {
 
     const [sortField, setSortField] = useState<keyof Client>("firstName");
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">('asc');
+
+    const dispatch = useDispatch();
 
     const [allClients, setAllClients] = useState<Client[]>([]);
     const [currentClients, setCurrentClients] = useState<Client[]>([]);
@@ -64,6 +68,7 @@ export const ClientsTable = () => {
                 setCurrentClients(clients)
             })
     }
+
     useEffect(getClients,[]);
 
     useEffect(() => {
