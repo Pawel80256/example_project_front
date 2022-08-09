@@ -5,3 +5,9 @@ export interface Project{
     name: string,
     clients: Client[]
 }
+
+export const InitialProject = {
+    id:'',
+    name:'',
+    clients:[]
+}

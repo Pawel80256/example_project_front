@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Client, InitialClient} from "../interfaces/Client";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../app/store";
-import {Project} from "../interfaces/Project";
+import {InitialProject, Project} from "../interfaces/Project";
 import {
     EuiBasicTable,
     EuiButton,
@@ -14,7 +14,8 @@ import {
 } from "@elastic/eui";
 import {EuiTableSortingType} from "@elastic/eui/src/components/basic_table";
 import {ClientInputModal} from "../clientsContent/ClientInputModal";
-import {fetchProjects} from "./ProjectThunks";
+import {deleteProject, fetchProjects} from "./ProjectThunks";
+import {ProjectInputModal} from "./ProjectInputModal";
 
 export const ProjectsTable = () =>{
     const [pageIndex, setPageIndex] = useState(0);
@@ -31,7 +32,7 @@ export const ProjectsTable = () =>{
 
     const [currentProjects, setCurrentProjects] = useState<Project[]>([]);
     const [nameSearchValue, setNameSearchValue] = useState('');
-    const [clientToEdit, setClientToEdit] = useState<Client>(InitialClient);
+    const [projectToEdit, setProjectToEdit] = useState<Project>(InitialProject);
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [modalMode, setModalMode] = useState<"add" | "edit">("add");
@@ -40,6 +41,13 @@ export const ProjectsTable = () =>{
     const loadProjects = () =>{
         dispatch(fetchProjects())
         setCurrentProjects(projects)
+    }
+
+    const handleEditButton = (project:Project, mode:"add" | "edit") =>{
+        setProjectToEdit(project)
+        setModalMode(mode)
+        setIsModalOpen(true)
+
     }
 
     useEffect(() => {
@@ -109,10 +117,10 @@ export const ProjectsTable = () =>{
                 <div>
                     <EuiFlexGroup>
                         <EuiFlexItem>
-                            <EuiButton size="s" onClick={() =>{}}>Edytuj</EuiButton>
+                            <EuiButton size="s" onClick={() => handleEditButton(project,"edit")}>Edytuj</EuiButton>
                         </EuiFlexItem>
                         <EuiFlexItem>
-                            <EuiButton fill size="s" color='danger' onClick={()=>{}} >Usuń</EuiButton>
+                            <EuiButton fill size="s" color='danger' onClick={()=>{dispatch(deleteProject(project.id))}} >Usuń</EuiButton>
                         </EuiFlexItem>
                     </EuiFlexGroup>
                 </div>
@@ -161,7 +169,7 @@ export const ProjectsTable = () =>{
                 sorting={sorting}
                 onChange={onTableChange}
             />
-            <ClientInputModal mode ={modalMode} client = {clientToEdit} open={isModalOpen} handleClose={handleClose}></ClientInputModal>
+            <ProjectInputModal mode ={modalMode} project={projectToEdit}  open={isModalOpen} handleClose={handleClose}></ProjectInputModal>
 
         </div>
     );
