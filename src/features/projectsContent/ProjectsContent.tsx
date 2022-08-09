@@ -1,4 +1,5 @@
 import { EuiPageBody, EuiPageContent, EuiPageContentBody, EuiPageHeader } from "@elastic/eui"
+import {ProjectsTable} from "./ProjectsTable";
 
 export const ProjectsContent = () => {
     return (
@@ -17,7 +18,10 @@ export const ProjectsContent = () => {
             color="transparent"
             borderRadius="none"
           >
-            <EuiPageContentBody restrictWidth>{"Projekty"}</EuiPageContentBody>
+            <EuiPageContentBody restrictWidth>
+                <ProjectsTable></ProjectsTable>
+            </EuiPageContentBody>
+
           </EuiPageContent>
         </EuiPageBody>
     )

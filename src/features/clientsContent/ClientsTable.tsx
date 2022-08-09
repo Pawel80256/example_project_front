@@ -30,7 +30,7 @@ export const ClientsTable = () => {
     const [pageIndex, setPageIndex] = useState(0);
     const [pageSize, setPageSize] = useState(0);
 
-    const [sortField, setSortField] = useState<keyof Client>("firstName");
+    const [sortField, setSortField] = useState<keyof Client>("name");
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">('asc');
 
     const dispatch = useDispatch<AppDispatch>();
@@ -57,15 +57,13 @@ export const ClientsTable = () => {
         dispatch(deleteClient(clientId))
     }
 
-
-
-    const getClientsByThunk = () => {
+    const loadClients = () => {
         dispatch(fetchClients())
         setCurrentClients(clients)
     }
 
 
-    useEffect(()=>{getClientsByThunk(); },[]);
+    useEffect(()=>{loadClients(); },[]);
 
     useEffect(() => {
         onTableChange({page: {index: pageIndex, size: pageSize}, sort:{field: sortField, direction: sortDirection}})
@@ -85,16 +83,16 @@ export const ClientsTable = () => {
 
         //sorting
         if (sortDirection === "asc") {
-            list = (list.sort((a, b) => (a.firstName > b.firstName) ? 1 : ((b.firstName > a.firstName) ? -1 : 0)))
+            list = (list.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)))
         }
         if (sortDirection === "desc") {
-            list = (list.sort((a, b) => (a.firstName < b.firstName) ? 1 : ((b.firstName < a.firstName) ? -1 : 0)))
+            list = (list.sort((a, b) => (a.name < b.name) ? 1 : ((b.name < a.name) ? -1 : 0)))
         }
 
         //searching 
         if(firstNameSearchValue !== "") {
             list = (list.filter(obj => {
-                return obj.firstName.includes(firstNameSearchValue)
+                return obj.name.includes(firstNameSearchValue)
             }))
         }
 

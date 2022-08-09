@@ -1,7 +1,7 @@
 
 export interface Client{
     id: string
-    firstName: string
+    name: string
     lastName: string
     address:{
         country: string
@@ -13,7 +13,7 @@ export interface Client{
 //obiekt inicjalizacyjny
 export const InitialClient:Client ={
     id: "",
-    firstName: "",
+    name: "",
     lastName: "",
     address:{
         country: "",
