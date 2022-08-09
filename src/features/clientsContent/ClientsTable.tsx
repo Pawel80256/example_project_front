@@ -20,8 +20,10 @@ import { stringify } from 'querystring';
 import { EuiTableSortingType } from '@elastic/eui/src/components/basic_table';
 import {Client, InitialClient} from '../interfaces/Client';
 import axios from "axios";
-import {useDispatch} from "react-redux";
-import {fetchClients} from "./ClientsSlice";
+import {useDispatch, useSelector} from "react-redux";
+import {fetchClients, sliceState} from "./ClientsSlice";
+import {AppDispatch, RootState} from "../../app/store";
+import {deleteClient} from "./clientThunks";
 
 
 export const ClientsTable = () => {
@@ -31,9 +33,11 @@ export const ClientsTable = () => {
     const [sortField, setSortField] = useState<keyof Client>("firstName");
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">('asc');
 
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
+    const clients = useSelector<RootState>(({ clients }) => {
+        return clients.clients
+    }) as Client[]
 
-    const [allClients, setAllClients] = useState<Client[]>([]);
     const [currentClients, setCurrentClients] = useState<Client[]>([]);
     const [firstNameSearchValue, setFirstNameSearchValue] = useState('');
     const [clientToEdit, setClientToEdit] = useState<Client>(InitialClient);
@@ -50,30 +54,22 @@ export const ClientsTable = () => {
     }
 
     const handleDelete = (clientId:string) =>{
-        axios.delete('http://localhost:8080/api/client/'.concat(clientId))
-            .then(function (response) {
-            console.log(response);
-        })
-            .catch(function (error) {
-                console.log(error);
-            });
+        dispatch(deleteClient(clientId))
     }
 
 
-    const getClients = () =>{
-        axios.get('http://localhost:8080/api/clients')
-            .then((response) => {
-                const clients = response.data;
-                setAllClients(clients)
-                setCurrentClients(clients)
-            })
+
+    const getClientsByThunk = () => {
+        dispatch(fetchClients())
+        setCurrentClients(clients)
     }
 
-    useEffect(getClients,[]);
+
+    useEffect(()=>{getClientsByThunk(); },[]);
 
     useEffect(() => {
         onTableChange({page: {index: pageIndex, size: pageSize}, sort:{field: sortField, direction: sortDirection}})
-    }, [firstNameSearchValue])
+    }, [firstNameSearchValue,clients])
 
     const onTableChange = ({ page = {} as any, sort = {} as any }) => {
         const { index: pageIndex, size: pageSize } = page;
@@ -84,29 +80,30 @@ export const ClientsTable = () => {
         setSortField(sortField);
         setSortDirection(sortDirection);
 
-        let lista:Client[] = JSON.parse(JSON.stringify(allClients))
+        let list:Client[] = JSON.parse(JSON.stringify(clients))
+        console.log(list)
 
         //sorting
         if (sortDirection === "asc") {
-            lista = (lista.sort((a, b) => (a.firstName > b.firstName) ? 1 : ((b.firstName > a.firstName) ? -1 : 0)))
+            list = (list.sort((a, b) => (a.firstName > b.firstName) ? 1 : ((b.firstName > a.firstName) ? -1 : 0)))
         }
         if (sortDirection === "desc") {
-            lista = (lista.sort((a, b) => (a.firstName < b.firstName) ? 1 : ((b.firstName < a.firstName) ? -1 : 0)))
+            list = (list.sort((a, b) => (a.firstName < b.firstName) ? 1 : ((b.firstName < a.firstName) ? -1 : 0)))
         }
 
         //searching 
         if(firstNameSearchValue !== "") {
-            lista = (lista.filter(obj => {
+            list = (list.filter(obj => {
                 return obj.firstName.includes(firstNameSearchValue)
             }))
         }
 
         //pagination
         if (pageSize !== 0) {
-                lista = (lista.slice(pageIndex*2, pageSize+(pageIndex*2)))
+                list = (list.slice(pageIndex*2, pageSize+(pageIndex*2)))
         }
 
-        setCurrentClients(lista);
+        setCurrentClients(list);
     };
 
     const columns = [
@@ -185,7 +182,7 @@ export const ClientsTable = () => {
     const pagination = {
         pageIndex,
         pageSize,
-        totalItemCount: allClients.length,
+        totalItemCount: clients.length,
         pageSizeOptions: [2, 0],
         showPerPageOptions: true,
     };

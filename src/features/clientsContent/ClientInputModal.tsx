@@ -18,6 +18,10 @@ import {
 } from '@elastic/eui';
 import {Client, InitialClient} from '../interfaces/Client';
 import axios from "axios";
+import {useDispatch} from "react-redux";
+
+import {AppDispatch} from "../../app/store";
+import {addClient, editClient} from "./clientThunks";
 
 export const ClientInputModal: React.FC<{ mode: "add" | "edit"; client: Client; open: boolean; handleClose:()=>void }> = (props) => {
   // const [open, setOpen] = useState<boolean>(false);
@@ -25,6 +29,8 @@ export const ClientInputModal: React.FC<{ mode: "add" | "edit"; client: Client; 
   const closeModal = () => (props.open = false);
 
   const [currentClient, setCurrentClient] = useState<Client>(InitialClient);
+
+  const dispatch = useDispatch<AppDispatch>();
 
   const firstNameRef = useRef<HTMLInputElement>(null)
   const lastNameRef = useRef<HTMLInputElement>(null)
@@ -46,23 +52,12 @@ export const ClientInputModal: React.FC<{ mode: "add" | "edit"; client: Client; 
             }
         }
         if(props.mode === "add"){
-            axios.post('http://localhost:8080/api/client',tempClient)
-                .then(function (response) {
-                    console.log(response);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+            dispatch(addClient(tempClient))
         }
 
         if(props.mode === "edit"){
-            axios.put('http://localhost:8080/api/client',tempClient)
-                .then(function (response) {
-                    console.log(response);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+            //
+            dispatch(editClient(tempClient))
         }
 
     };
@@ -111,7 +106,7 @@ export const ClientInputModal: React.FC<{ mode: "add" | "edit"; client: Client; 
         <EuiModalFooter>
           <EuiButtonEmpty onClick={props.handleClose}>Anuluj</EuiButtonEmpty>
 
-          <EuiButton type="submit" form={modalFormId} onClick={handleSubmit} fill>
+          <EuiButton  form={modalFormId} onClick={handleSubmit} fill>
             Dodaj
           </EuiButton>
         </EuiModalFooter>
