@@ -26,7 +26,7 @@ import {AppDispatch, RootState} from "../../app/store";
 import {deleteClient} from "./clientThunks";
 
 
-export const ClientsTable = () => {
+export const ClientsTable:React.FC<{clients:Client[]}> = (props) => {
     const [pageIndex, setPageIndex] = useState(0);
     const [pageSize, setPageSize] = useState(0);
 
@@ -34,9 +34,6 @@ export const ClientsTable = () => {
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">('asc');
 
     const dispatch = useDispatch<AppDispatch>();
-    const clients = useSelector<RootState>(({ clients }) => {
-        return clients.clients
-    }) as Client[]
 
     const [displayingClients, setdisplayingClients] = useState<Client[]>([]);
     const [firstNameSearchValue, setFirstNameSearchValue] = useState('');
@@ -57,13 +54,12 @@ export const ClientsTable = () => {
     }
 
     const loadClients = () => {
-        dispatch(fetchClients())
-        setdisplayingClients(clients)
+        setdisplayingClients(props.clients)
     }
 
     useEffect(() => {
         onTableChange({page: {index: pageIndex, size: pageSize}, sort:{field: sortField, direction: sortDirection}})
-    }, [firstNameSearchValue,clients])
+    }, [firstNameSearchValue,props.clients])
 
     useEffect(()=>{loadClients(); },[]);
 
@@ -77,7 +73,7 @@ export const ClientsTable = () => {
         setSortField(sortField);
         setSortDirection(sortDirection);
 
-        let list:Client[] = JSON.parse(JSON.stringify(clients))
+        let list:Client[] = JSON.parse(JSON.stringify(props.clients))
         console.log(list)
 
         //sorting
@@ -179,7 +175,7 @@ export const ClientsTable = () => {
     const pagination = {
         pageIndex,
         pageSize,
-        totalItemCount: clients.length,
+        totalItemCount: props.clients.length,
         pageSizeOptions: [2, 0],
         showPerPageOptions: true,
     };

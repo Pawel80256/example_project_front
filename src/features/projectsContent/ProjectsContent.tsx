@@ -2,10 +2,16 @@ import {EuiButton, EuiPageBody, EuiPageContent, EuiPageContentBody, EuiPageHeade
 import {ProjectsTable} from "./ProjectsTable";
 import React, {useState} from "react";
 import {ProjectInputModal} from "./ProjectInputModal";
-import {InitialProject} from "../interfaces/Project";
+import {InitialProject, Project} from "../interfaces/Project";
+import {useSelector} from "react-redux";
+import {RootState} from "../../app/store";
+import {Client} from "../interfaces/Client";
 
 export const ProjectsContent = () => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const projects = useSelector<RootState>(({ projects }) => {
+        return projects.projects
+    }) as Project[]
     return (
         <EuiPageBody panelled>
           <EuiPageHeader
@@ -24,7 +30,7 @@ export const ProjectsContent = () => {
             borderRadius="none"
           >
             <EuiPageContentBody restrictWidth>
-                <ProjectsTable></ProjectsTable>
+                <ProjectsTable projects={projects}></ProjectsTable>
                 <ProjectInputModal mode="add" project={InitialProject} open={isModalOpen} handleClose={()=>setIsModalOpen(false)}></ProjectInputModal>
             </EuiPageContentBody>
 

@@ -13,11 +13,10 @@ import {
     EuiSpacer
 } from "@elastic/eui";
 import {EuiTableSortingType} from "@elastic/eui/src/components/basic_table";
-import {ClientInputModal} from "../clientsContent/ClientInputModal";
 import {deleteProject, fetchProjects} from "./ProjectThunks";
 import {ProjectInputModal} from "./ProjectInputModal";
 
-export const ProjectsTable = () =>{
+export const ProjectsTable:React.FC<{projects:Project[]}>= (props) =>{
     const [pageIndex, setPageIndex] = useState(0);
     const [pageSize, setPageSize] = useState(0);
 
@@ -25,10 +24,6 @@ export const ProjectsTable = () =>{
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">('asc');
 
     const dispatch = useDispatch<AppDispatch>();
-    const projects = useSelector<RootState>(({ projects }) => {
-        return projects.projects
-    }) as Project[]
-
 
     const [displayingProjects, setDisplayingProjects] = useState<Project[]>([]);
     const [nameSearchValue, setNameSearchValue] = useState('');
@@ -44,19 +39,14 @@ export const ProjectsTable = () =>{
         setIsModalOpen(true)
     }
 
-    const loadProjects = () =>{
-        dispatch(fetchProjects())
-        setDisplayingProjects(projects)
-    }
 
     useEffect(() => {
         onTableChange({page: {index: pageIndex, size: pageSize}, sort:{field: sortField, direction: sortDirection}})
-    }, [nameSearchValue,projects])
+    }, [nameSearchValue,props.projects])
 
     useEffect(() => {
-        loadProjects()
+        setDisplayingProjects(props.projects)
     },[])
-
 
 
     const onTableChange = ({ page = {} as any, sort = {} as any }) => {
@@ -68,7 +58,7 @@ export const ProjectsTable = () =>{
         setSortField(sortField);
         setSortDirection(sortDirection);
 
-        let list:Project[] = JSON.parse(JSON.stringify(projects))
+        let list:Project[] = JSON.parse(JSON.stringify(props.projects))
 
         //sorting
         if (sortDirection === "asc") {
@@ -130,7 +120,7 @@ export const ProjectsTable = () =>{
     const pagination = {
         pageIndex,
         pageSize,
-        totalItemCount: projects.length,
+        totalItemCount: props.projects.length,
         pageSizeOptions: [2, 0],
         showPerPageOptions: true,
     };
