@@ -42,7 +42,7 @@ export const ClientInputModal: React.FC<{ mode: "add" | "edit"; client: Client; 
     const handleSubmit = () => {
         const tempClient:Client = {
             id : currentClient.id,
-            name : firstNameRef.current!.value,
+            firstName : firstNameRef.current!.value,
             lastName : lastNameRef.current!.value,
             address :{
                 country : countryRef.current!.value,
@@ -69,7 +69,7 @@ export const ClientInputModal: React.FC<{ mode: "add" | "edit"; client: Client; 
     <EuiForm id={modalFormId} component="form">
 
       <EuiFormRow label="Imię">
-        <EuiFieldText name="firstName" defaultValue={currentClient.name} inputRef={firstNameRef} />
+        <EuiFieldText name="firstName" defaultValue={currentClient.firstName} inputRef={firstNameRef} />
       </EuiFormRow>
       <EuiFormRow label="Nazwisko">
         <EuiFieldText name="lastName" defaultValue={currentClient.lastName} inputRef={lastNameRef}/>

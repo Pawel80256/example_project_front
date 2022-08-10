@@ -27,7 +27,14 @@ export const ProjectInputModal: React.FC<{ mode: "add" | "edit"; project:Project
 
     const nameRef = useRef<HTMLInputElement>(null);
 
+    const [showErrors, setShowErrors] = useState<boolean>(false);
+
     const handleSubmit = () =>{
+        if(nameRef.current!.value === ""){
+            setShowErrors(true);
+            return
+        }
+        setShowErrors(false)
         const tempProject = {
             id: currentProject.id,
             name: nameRef.current!.value,
@@ -35,6 +42,7 @@ export const ProjectInputModal: React.FC<{ mode: "add" | "edit"; project:Project
         }
 
         if(props.mode === "add"){
+            console.log(tempProject)
             dispatch(addProject(tempProject))
         }
         if(props.mode === "edit"){
@@ -46,8 +54,8 @@ export const ProjectInputModal: React.FC<{ mode: "add" | "edit"; project:Project
 
     const form = (
         <EuiForm id = {modalFormId} component="form">
-            <EuiFormRow label = "Nazwa">
-                <EuiFieldText name="name" defaultValue={currentProject.name} inputRef={nameRef}></EuiFieldText>
+            <EuiFormRow label = "Nazwa" error = {"Pole nie moze byc puste"}>
+                <EuiFieldText name="name" isInvalid={showErrors}  defaultValue={currentProject.name} inputRef={nameRef}></EuiFieldText>
             </EuiFormRow>
         </EuiForm>
     );

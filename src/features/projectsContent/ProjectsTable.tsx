@@ -30,33 +30,33 @@ export const ProjectsTable = () =>{
     }) as Project[]
 
 
-    const [currentProjects, setCurrentProjects] = useState<Project[]>([]);
+    const [displayingProjects, setDisplayingProjects] = useState<Project[]>([]);
     const [nameSearchValue, setNameSearchValue] = useState('');
-    const [projectToEdit, setProjectToEdit] = useState<Project>(InitialProject);
+    const [projectRequestBody, setProjectRequestBody] = useState<Project>(InitialProject);
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [modalMode, setModalMode] = useState<"add" | "edit">("add");
     const handleClose:() => void = () =>{setIsModalOpen(false)}
 
-    const loadProjects = () =>{
-        dispatch(fetchProjects())
-        setCurrentProjects(projects)
-    }
-
     const handleEditButton = (project:Project, mode:"add" | "edit") =>{
-        setProjectToEdit(project)
+        setProjectRequestBody(project)
         setModalMode(mode)
         setIsModalOpen(true)
-
     }
+
+    const loadProjects = () =>{
+        dispatch(fetchProjects())
+        setDisplayingProjects(projects)
+    }
+
+    useEffect(() => {
+        onTableChange({page: {index: pageIndex, size: pageSize}, sort:{field: sortField, direction: sortDirection}})
+    }, [nameSearchValue,projects])
 
     useEffect(() => {
         loadProjects()
     },[])
 
-    useEffect(() => {
-        onTableChange({page: {index: pageIndex, size: pageSize}, sort:{field: sortField, direction: sortDirection}})
-    }, [nameSearchValue,projects])
 
 
     const onTableChange = ({ page = {} as any, sort = {} as any }) => {
@@ -69,14 +69,13 @@ export const ProjectsTable = () =>{
         setSortDirection(sortDirection);
 
         let list:Project[] = JSON.parse(JSON.stringify(projects))
-        console.log(list)
 
         //sorting
         if (sortDirection === "asc") {
-            list = (list.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)))
+            list = (list.sort((a, b) => a.name.localeCompare(b.name)))
         }
         if (sortDirection === "desc") {
-            list = (list.sort((a, b) => (a.name < b.name) ? 1 : ((b.name < a.name) ? -1 : 0)))
+            list = (list.sort((a, b) => a.name.localeCompare(b.name))).reverse()
         }
 
         //searching
@@ -88,10 +87,10 @@ export const ProjectsTable = () =>{
 
         //pagination
         if (pageSize !== 0) {
-            list = (list.slice(pageIndex*2, pageSize+(pageIndex*2)))
+            list = (list.slice(pageIndex*pageSize, pageSize+(pageIndex*pageSize)))
         }
 
-        setCurrentProjects(list);
+        setDisplayingProjects(list);
     };
 
     const columns = [
@@ -163,13 +162,13 @@ export const ProjectsTable = () =>{
 
             <EuiBasicTable
                 tableCaption="Demo for EuiBasicTable with pagination"
-                items={currentProjects}
+                items={displayingProjects}
                 columns={columns}
                 pagination={pagination}
                 sorting={sorting}
                 onChange={onTableChange}
             />
-            <ProjectInputModal mode ={modalMode} project={projectToEdit}  open={isModalOpen} handleClose={handleClose}></ProjectInputModal>
+            <ProjectInputModal mode ={modalMode} project={projectRequestBody}  open={isModalOpen} handleClose={handleClose}></ProjectInputModal>
 
         </div>
     );
