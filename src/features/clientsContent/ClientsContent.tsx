@@ -32,7 +32,7 @@ export const ClientsContent = () =>{
             borderRadius="none"
           >
             <EuiPageContentBody restrictWidth>
-              <ClientsTable clients={clients}></ClientsTable>
+              <ClientsTable addingClientToProject={false} clients={clients}></ClientsTable>
               <ClientInputModal mode="add" open={isModalOpen} client={InitialClient} handleClose={()=>setIsModalOpen(false)}></ClientInputModal>
             </EuiPageContentBody>
           </EuiPageContent>

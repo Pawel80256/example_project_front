@@ -26,7 +26,7 @@ import {AppDispatch, RootState} from "../../app/store";
 import {deleteClient} from "./clientThunks";
 
 
-export const ClientsTable:React.FC<{clients:Client[]}> = (props) => {
+export const ClientsTable:React.FC<{clients:Client[]; addingClientToProject:boolean}> = (props) => {
     const [pageIndex, setPageIndex] = useState(0);
     const [pageSize, setPageSize] = useState(0);
 
@@ -108,6 +108,7 @@ export const ClientsTable:React.FC<{clients:Client[]}> = (props) => {
             mobileOptions: {
                 show: true,
             },
+
         },
         {
             field: 'lastName',
@@ -154,18 +155,30 @@ export const ClientsTable:React.FC<{clients:Client[]}> = (props) => {
 
         {
             field: 'editDelete',
-            name: "Edycja / Usuwanie",
+            name: "Akcje",
             width: "25%",
             render: (el:any, client:Client) => (
                 <div>
-                    <EuiFlexGroup>
-                        <EuiFlexItem>
-                            <EuiButton size="s" onClick={() =>{handleEditButton(client)}}>Edytuj</EuiButton>
-                        </EuiFlexItem>
-                        <EuiFlexItem>
-                            <EuiButton fill size="s" color='danger' onClick={()=>handleDelete(client.id)} >Usuń</EuiButton>
-                        </EuiFlexItem>
-                    </EuiFlexGroup>
+                    {
+                        props.addingClientToProject ?
+                            <EuiFlexGroup>
+                                <EuiFlexItem>
+                                    <EuiButton fill size = "s">
+                                        Dodaj
+                                    </EuiButton>
+                                </EuiFlexItem>
+                            </EuiFlexGroup>
+                            :
+                            <EuiFlexGroup>
+                                <EuiFlexItem>
+                                    <EuiButton size="s" onClick={() =>{handleEditButton(client)}}>Edytuj</EuiButton>
+                                </EuiFlexItem>
+                                <EuiFlexItem>
+                                    <EuiButton fill size="s" color='danger' onClick={()=>handleDelete(client.id)} >Usuń</EuiButton>
+                                </EuiFlexItem>
+                            </EuiFlexGroup>
+                    }
+
                 </div>
             )
         },

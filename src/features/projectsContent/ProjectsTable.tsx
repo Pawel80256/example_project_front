@@ -16,7 +16,10 @@ import {EuiTableSortingType} from "@elastic/eui/src/components/basic_table";
 import {deleteProject, fetchProjects} from "./ProjectThunks";
 import {ProjectInputModal} from "./ProjectInputModal";
 
-export const ProjectsTable:React.FC<{projects:Project[]}>= (props) =>{
+export const ProjectsTable:React.FC<{projects:Project[];
+                                     displayEditButtons:boolean;
+                                     displayClientAdditionButtons:boolean;
+                                     setDisplayClientsTable:(value:boolean)=>void}>= (props) =>{
     const [pageIndex, setPageIndex] = useState(0);
     const [pageSize, setPageSize] = useState(0);
 
@@ -104,6 +107,7 @@ export const ProjectsTable:React.FC<{projects:Project[]}>= (props) =>{
             width: "25%",
             render: (el:any, project:Project) => (
                 <div>
+                    {props.displayEditButtons &&
                     <EuiFlexGroup>
                         <EuiFlexItem>
                             <EuiButton size="s" onClick={() => handleEditButton(project,"edit")}>Edytuj</EuiButton>
@@ -112,6 +116,13 @@ export const ProjectsTable:React.FC<{projects:Project[]}>= (props) =>{
                             <EuiButton fill size="s" color='danger' onClick={()=>{dispatch(deleteProject(project.id))}} >Usuń</EuiButton>
                         </EuiFlexItem>
                     </EuiFlexGroup>
+                    }
+                    {props.displayClientAdditionButtons &&
+                    <EuiFlexGroup>
+                        <EuiFlexItem>
+                            <EuiButton size="s" onClick ={()=>{props.setDisplayClientsTable(true)}}>Dodaj pacjentow</EuiButton>
+                        </EuiFlexItem>
+                    </EuiFlexGroup>}
                 </div>
             )
         },
